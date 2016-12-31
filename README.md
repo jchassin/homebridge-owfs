@@ -1,5 +1,6 @@
 # homebridge-owfs
-This is a plugin for the DS18B20 temperature sensors. It relies on OWFS filesystem directly.
+This is a plugin for the DS18B20 temperature sensors. As Pre-requisite, you need to have OWFS installed on your RPi. This plugin relies on OWFS filesystem directly.
+In a near future, this plugin will be ported on OWSERVER in order to acquire sensors remotely.
 
 Installation
 --------------------

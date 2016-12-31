@@ -1,0 +1,33 @@
+{
+  "name": "homebridge-owfs",
+  "version": "1.0.1",
+  "description": "A HomeBridge plugin for based on OWFS file system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jchassin/homebridge-owfs.git"
+  },
+  "files": [
+    "index.js",
+    "README.md"
+  ],
+  "keywords": [
+    "homebridge-plugin"
+  ],
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  },
+  "author": "Jean Chassin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jchassin/homebridge-owfs/issues"
+  },
+  "homepage": "https://github.com/jchassin/homebridge-owfs#readme",
+  "dependencies": {
+    "fs": "^0.1.0"
+  }
+}
