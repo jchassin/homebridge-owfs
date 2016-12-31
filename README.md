@@ -1,9 +1,9 @@
-# homebridge-ds18b20
+# homebridge-owfs
 This is a plugin for the DS18B20 temperature sensors. It relies on OWFS filesystem directly.
 
 Installation
 --------------------
-    sudo npm install -g homebridge-ds18b20
+    sudo npm install -g homebridge-owfs
 
 Sample HomeBridge Configuration
 --------------------
@@ -19,7 +19,7 @@ Sample HomeBridge Configuration
     
       "accessories": [
         {
-          "accessory": "DS18B20",
+          "accessory": "OWFS_DS18B20",
           "name": "Temperature Sensor",
           "device": "28.0000063f4ead"
         }
