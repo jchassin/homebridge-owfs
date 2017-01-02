@@ -1,6 +1,6 @@
 # homebridge-owfs
-This is a plugin for the DS18B20 temperature sensors. As Pre-requisite, you need to have OWFS installed on your RPi. This plugin relies on OWFS filesystem directly.
-In a near future, this plugin will be ported on OWSERVER in order to acquire sensors remotely.
+This is a plugin for the DS18B20 temperature sensors. As Pre-requisite, you need to have OWFS installed on your RPi. 
+From version 1.1.0, this plugin relies on OWSERVER protocol to poll 1-wire devices (previous versions used owfs directly through fs access).
 
 Installation
 --------------------
@@ -22,7 +22,9 @@ Sample HomeBridge Configuration
         {
           "accessory": "OWFS_DS18B20",
           "name": "Temperature Sensor",
-          "device": "28.0000063f4ead"
+          "device": "28.0000063f4ead",
+          "host_ip": "raspberrypi.local or whatever IP address, can be omitted if local board is used",
+          "host_port: "4304 can be omitted if default 4304 port is used"
         }
       ],
     

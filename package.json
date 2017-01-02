@@ -1,7 +1,7 @@
 {
   "name": "homebridge-owfs",
-  "version": "1.0.1",
-  "description": "A HomeBridge plugin for based on OWFS file system",
+  "version": "1.1.0",
+  "description": "A HomeBridge plugin for based on OWSERVER protocol",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/jchassin/homebridge-owfs#readme",
   "dependencies": {
-    "fs": "^0.1.0"
+    "fs": "^0.1.0",
+    "owfs": ">=0.2.4"
   }
 }
