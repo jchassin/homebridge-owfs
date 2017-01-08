@@ -20,6 +20,18 @@ Sample HomeBridge Configuration
     
       "accessories": [
         {
+          "accessory": "OWFS_DS2408",
+          "name": "GardenSwitch",
+          "device": "29.67C6697351FF",
+          "switches": [
+             { "name": "Main Light", "port" : "1" },
+             { "name": "water", "port" : "2" },
+             { "name": "Barbecue", "port" : "3" }
+          ],
+          "host_ip": "raspberrypi.local or whatever IP address, can be omitted if local board is used",
+          "host_port: "4304 can be omitted if default 4304 port is used"
+        },
+        {
           "accessory": "OWFS_DS18B20",
           "name": "Temperature Sensor",
           "device": "28.0000063f4ead",
@@ -30,3 +42,11 @@ Sample HomeBridge Configuration
     
       "platforms": []
     }
+
+Version history  
+--------------------
+- 1.0.0 : ds18b20 management through access through FS
+- 1.1.0 : add owserver management 
+- 1.2.0 : add ds2403 and ds2408 management (switches)
+
+
