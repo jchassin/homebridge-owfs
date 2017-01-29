@@ -45,6 +45,7 @@ Sample HomeBridge Configuration
 
 Version history  
 -------------------
+- 1.3.1 : remove fs dependency not anymore necessary (install from npm was not working)
 - 1.3.0 : migrate to owjs lib (there were an issue in 1.2.0 when trying to write on DS2408 using owfs)
 - 1.2.0 : add ds2403 and ds2408 management (switches)
 - 1.1.0 : add owserver management
