@@ -3,7 +3,7 @@
 // Globals
 
 var fs = require('fs');
-var Client = require("owfs").Client;
+var Client = require("owjs").Client;
 var Service, Characteristic;
 var temperatureService;
 
@@ -27,7 +27,7 @@ function OwfsAccessory(log, config)
   this.hostIp = config["host_ip"]?config["host_ip"]:'localhost';
   this.hostPort = config["host_port"]?config["host_port"]:4304;
   this.switches = config.switches;
-  this.OwfsCnx = new Client(this.hostIp, this.hostPort) ;
+  this.OwfsCnx = new Client(this.hostPort, this.hostIp) ;
   this.lastupdate = 0;
   this.log("Configuring device : " + config["device"] + " on " + this.hostIp + ":" + this.hostPort);
   this.currentStatus = 0;
@@ -39,6 +39,7 @@ function getPortSizeAndMask (device, deviceName)
   var portSize = 0;
   var portMask = 0;
   var ioPortName = "/" + deviceName;
+
 
   switch (device) {
         case 'OWFS_DS2405' :
@@ -70,20 +71,10 @@ function getPortSizeAndMask (device, deviceName)
 
 OwfsAccessory.prototype =
   {
-/*
-    _set: function (state, callback)
-    {
-      this.currentStatus = state;
-      this.log("Setting state : " + this.currentStatus );
-      callback(null); 
-    },
-*/
     getSwitchState: function (switchMask, callback)
     {
       callback(null, parseInt(this.currentStatus & switchMask)?1:0);
     },
-
-
     setSwitchState: function(targetService, currentStatusState, callback, context) {
         var funcContext = 'fromSetSwitchState';
 
@@ -117,26 +108,22 @@ OwfsAccessory.prototype =
             this.currentStatus &= this.portMask;
             this.log("Setting " + targetService.subtype + " : " + newState);
             this.log.debug("Setting " + this.deviceName + " mask " + portMask + " curState : " + curState + " ioPort " + this.currentStatus);
-
-            this.OwfsCnx.write( this.ioPortName, this.currentStatus , function (cbk, err, data) {
-           
-              if (err) {
-                this.log("Error writing " + this.ioPortName);
-                cbk(err); 
-              }
-              else 
-              {
+            this.OwfsCnx.write( this.ioPortName, this.currentStatus)
+              .then( function (cbk, data) {
                 cbk(null, newState);
-              }
-            }.bind(this, callback));
+            }.bind(this, callback))
+            .catch ( function (err)  {
+                this.log("Error writing " + this.ioPortName);
+                cbk(err);
+            });
         }
      }.bind(this)); // foreach
     },
 
     identify: function (callback)
     {
-    this.log("Identify requested!");
-    callback(); // success
+       this.log("Identify requested!");
+       callback(); // success
     },
     getServices: function ()
     {
@@ -227,18 +214,16 @@ OwfsAccessory.prototype.owReadTemperature = function (cbk)
   if (this.lastupdate + 60 < (Date.now() / 1000 | 0))
   {
 
-    this.OwfsCnx.read( this.ioPortName, function (cbk, err, data) {
-      if (err) {
-         this.log.error("Error reading " + this.ioPortName); 
-         cbk(err);  
-      }
-      else
-      {
-         this.currentStatus = (0.0+parseFloat(data));
+    this.OwfsCnx.read( this.ioPortName)
+      .then(function (cbk, data) { 
+         this.currentStatus = parseFloat(0.0+data.value.trim());
          this.log("Temperature is " + this.currentStatus);
          cbk(null, this.currentStatus);
-      }
-    }.bind(this, cbk));
+       }.bind(this, cbk))
+      .catch( function (error)  { 
+         this.log.error("Error reading " + this.ioPortName);
+	 cbk(error);
+      }.bind(this, cbk));
   }
   return;
 }
@@ -246,18 +231,15 @@ OwfsAccessory.prototype.owReadTemperature = function (cbk)
 OwfsAccessory.prototype.owReadPio = function ()
 {
   var data;
-  this.OwfsCnx.read( this.ioPortName, function (err, data) {
-    if (err) {
+  this.OwfsCnx.read( this.ioPortName)
+   .then(function (data) {
+       this.currentStatus = data.value.trim();
+       this.log.debug("Initial value of : " +  this.ioPortName + " value : " + this.currentStatus);
+       }.bind(this))
+   .catch( function (error) {
        this.log.error("Error reading " + this.ioPortName);
        this.currentStatus = 0;
-    }
-    else
-    { 
-       this.currentStatus = data;
-       this.log.debug("Initial value of : " +  this.ioPortName + " value : " + this.currentStatus);
-    }
-
-  }.bind(this));
+    }.bind(this));
   return;
 }
 
