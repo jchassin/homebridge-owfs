@@ -28,7 +28,6 @@
   },
   "homepage": "https://github.com/jchassin/homebridge-owfs#readme",
   "dependencies": {
-    "fs": "^0.1.0",
-    "owfs": ">=0.2.4"
+    "owjs": ">=0.1.1"
   }
 }
