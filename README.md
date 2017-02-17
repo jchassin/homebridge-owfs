@@ -1,5 +1,5 @@
 # homebridge-owfs
-This is a plugin for the DS18B20 temperature sensors. As Pre-requisite, you need to have OWFS installed on your RPi. 
+This is a plugin for the DS18B20 temperature sensors but also for DS2408 and DS2403 (switches). As Pre-requisite, you need to have OWFS installed on your RPi. 
 From version 1.1.0, this plugin relies on OWSERVER protocol to poll 1-wire devices (previous versions used owfs directly through fs access).
 
 Installation
