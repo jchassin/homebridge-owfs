@@ -25,7 +25,7 @@ function OwfsAccessory(log, config) {
     this.hostIp = config["host_ip"] ? config["host_ip"] : 'localhost';
     this.hostPort = config["host_port"] ? config["host_port"] : 4304;
     this.switches = config.switches;
-    this.OwfsCnx = new Client(this.hostPort, this.hostIp);
+    this.OwfsCnx = new Client({host:this.hostIp, port:this.hostPort});
     this.lastupdate = 0;
     this.log("Configuring device : " + config["device"] + " on " + this.hostIp + ":" + this.hostPort);
     this.currentStatus = 0;
