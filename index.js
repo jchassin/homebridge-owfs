@@ -138,20 +138,8 @@ OwfsAccessory.prototype = {
                 temperatureService = new Service.TemperatureSensor(this.name);
                 temperatureService
                     .getCharacteristic(Characteristic.CurrentTemperature)
+                    .setProps({ minValue: -100, maxValue: 100, minStep: 0.1 })
                     .on('get', this.owReadTemperature.bind(this));
-
-                temperatureService
-                    .getCharacteristic(Characteristic.CurrentTemperature)
-                    .setProps({
-                        minValue: -30
-                    });
-
-                temperatureService
-                    .getCharacteristic(Characteristic.CurrentTemperature)
-                    .setProps({
-                        maxValue: 120
-                    });
-
                 this.services.push(temperatureService);
 
                 break;
@@ -214,7 +202,7 @@ OwfsAccessory.prototype.owReadTemperature = function(cbk) {
 
         this.OwfsCnx.read(this.ioPortName)
             .then(function(cbk, data) {
-                this.currentStatus = parseFloat(0.0 + data.value.trim());
+                this.currentStatus = 0.0 + parseFloat(data.value.trim());
                 this.log("Temperature is " + this.currentStatus);
                 cbk(null, this.currentStatus);
             }.bind(this, cbk))
