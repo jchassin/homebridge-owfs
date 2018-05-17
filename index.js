@@ -6,11 +6,14 @@ var fs = require('fs');
 var Client = require("owjs").Client;
 var Service, Characteristic;
 var temperatureService;
+var humidityService;
 
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
     homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS18B20", OwfsAccessory);
+    homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS2438", OwfsAccessory);
+    homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_EDS0065", OwfsAccessory);
     homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS2405", OwfsAccessory);
     homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS2408", OwfsAccessory);
 }
@@ -29,6 +32,7 @@ function OwfsAccessory(log, config) {
     this.lastupdate = 0;
     this.log("Configuring device : " + config["device"] + " on " + this.hostIp + ":" + this.hostPort);
     this.currentStatus = 0;
+    this.reading = {'temperature':0, 'humidity':0};
     this.services = [];
 }
 
@@ -133,13 +137,29 @@ OwfsAccessory.prototype = {
 
         switch (this.accessory) {
 
+            case 'OWFS_EDS0065': // Temp, Humidity, Controller
+                this.deviceName += '/EDS0065'
+                // Everything will line up below this now...
+                
+            case 'OWFS_DS2438': // Temp, Humidity
+                this.ioPortName = "/" + this.deviceName;
+                humidityService = new Service.HumiditySensor(this.name);
+                humidityService 
+                    .getCharacteristic(Characteristic.CurrentRelativeHumidity)
+                    .on('get', this.owReadTemperature.bind(this,"humidity"));
+
+                this.services.push(humidityService);
+                
+                // Define Temperature Reading as well as Humidity
+                // Pass on through...
+                                
             case 'OWFS_DS18B20':
-                this.ioPortName = "/" + this.deviceName + "/temperature";
+                this.ioPortName = "/" + this.deviceName;
                 temperatureService = new Service.TemperatureSensor(this.name);
                 temperatureService
                     .getCharacteristic(Characteristic.CurrentTemperature)
                     .setProps({ minValue: -100, maxValue: 100, minStep: 0.1 })
-                    .on('get', this.owReadTemperature.bind(this));
+                    .on('get', this.owReadTemperature.bind(this,"temperature"));
                 this.services.push(temperatureService);
 
                 break;
@@ -195,19 +215,18 @@ OwfsAccessory.prototype = {
 // private method : read on one wire bus
 // today limited to Temperature devices
 // assumption : no interleaved call to this method for a given device (one variable per instance to store cbk)
-OwfsAccessory.prototype.owReadTemperature = function(cbk) {
+OwfsAccessory.prototype.owReadTemperature = function(d_type, cbk) {
     var data;
-
     if (this.lastupdate + 60 < (Date.now() / 1000 | 0)) {
 
-        this.OwfsCnx.read(this.ioPortName)
+        this.OwfsCnx.read(this.ioPortName + '/' + d_type)
             .then(function(cbk, data) {
-                this.currentStatus = 0.0 + parseFloat(data.value.trim());
-                this.log("Temperature is " + this.currentStatus);
-                cbk(null, this.currentStatus);
+                this.reading[d_type] = parseFloat(0.0 + data.value.trim());
+                this.log(d_type + " is " + this.reading[d_type]);
+                cbk(null, this.reading[d_type]);
             }.bind(this, cbk))
             .catch(function(error) {
-                this.log.error("Error reading " + this.ioPortName);
+                this.log.error("Error reading " + this.ioPortName + '/' + d_type);
                 cbk(error);
             }.bind(this, cbk));
     }
@@ -216,6 +235,7 @@ OwfsAccessory.prototype.owReadTemperature = function(cbk) {
 
 OwfsAccessory.prototype.owReadPio = function() {
     var data;
+    this.log("ioPortName is " + this.ioPortName);
     this.OwfsCnx.read(this.ioPortName)
         .then(function(data) {
             this.currentStatus = data.value.trim();
