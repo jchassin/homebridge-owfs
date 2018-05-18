@@ -3,13 +3,13 @@ This is a plugin for 1-Wire temperature and humidity sensors (DS18B20, for examp
 From version 1.1.0, this plugin relies on OWSERVER protocol to poll 1-wire devices (previous versions used owfs directly through fs access).  Historical display of temperature and humidity data is available via HomeKit apps thats support graphing.
 
 # The following 1-Wire Sensors (types) are pre-configured:
-- OWFS_DS18B20 : temperature
-- OWFS_DS2438 : temperature, humidity
-- OWFS_EDS0064 : temperature
-- OWFS_EDS0065 : temperature, humidity
-- OWFS_EDS0066 : temperature
-- OWFS_EDS0067 : temperature
-- OWFS_EDS0068 : temperature
+- `OWFS_DS18B20` : temperature
+- `OWFS_DS2438` : temperature, humidity
+- `OWFS_EDS0064` : temperature
+- `OWFS_EDS0065` : temperature, humidity
+- `OWFS_EDS0066` : temperature
+- `OWFS_EDS0067` : temperature
+- `OWFS_EDS0068` : temperature
 
 Any 1-Wire sensor that provides temperature or humidity should be configurable.  It is also possible to pull alternate temperature and humidity values supplied by some devices. 
 
