@@ -4,16 +4,31 @@
 
 var fs = require('fs');
 var Client = require("owjs").Client;
-var Service, Characteristic;
+var Service, Characteristic, FakeGatoHistoryService;
 var temperatureService;
 var humidityService;
+const moment = require('moment');
+
+var owfsDevices = {
+    "OWFS_DS2405":  {'addressable switch': ''},
+    "OWFS_DS2408":  {'addressable switch': ''},
+    "OWFS_DS18B20": {'temperature': 'temperature'},
+    "OWFS_DS2438":  {'temperature': 'temperature', 
+                     'humidity': 'humidity'},
+    "OWFS_EDS0064": {'temperature': 'EDS0064/temperature'}, 
+    "OWFS_EDS0065": {'temperature': 'EDS0065/temperature',
+                     'humidity': 'EDS0065/humidity'}, 
+    "OWFS_EDS0066": {'temperature': 'EDS0066/temperature'}, 
+    "OWFS_EDS0067": {'temperature': 'EDS0067/temperature'}, 
+    "OWFS_EDS0068": {'temperature': 'EDS0068/temperature'}, 
+    "OWFS_Sensor":  {'temperature': 'temperature'}
+}
 
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS18B20", OwfsAccessory);
-    homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS2438", OwfsAccessory);
-    homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_EDS0065", OwfsAccessory);
+    FakeGatoHistoryService = require('fakegato-history')(homebridge);
+    homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_Sensor", OwfsAccessory); // Specify environmental sendor
     homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS2405", OwfsAccessory);
     homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS2408", OwfsAccessory);
 }
@@ -25,15 +40,22 @@ function OwfsAccessory(log, config) {
     this.name = config["name"];
     this.deviceName = config["device"];
     this.accessory = config["accessory"];
-    this.hostIp = config["host_ip"] ? config["host_ip"] : 'localhost';
-    this.hostPort = config["host_port"] ? config["host_port"] : 4304;
+    this.deviceType = config["type"] || this.accessory;
+    this.settings = config["capabilities"] || owfsDevices[this.deviceType];
+    this.hostIp = config["host_ip"] || 'localhost';
+    this.hostPort = config["host_port"] || 4304;
+    this.update_interval = config['update_interval'] || 2; // minutes
+    this.log_days = config['log_days'] || 365;
+    
+    this.services = [];
     this.switches = config.switches;
     this.OwfsCnx = new Client({host:this.hostIp, port:this.hostPort});
-    this.lastupdate = 0;
     this.log("Configuring device : " + config["device"] + " on " + this.hostIp + ":" + this.hostPort);
+    this.log("Capabilities: " + Object.keys(this.settings).join(','))
     this.currentStatus = 0;
     this.reading = {'temperature':0, 'humidity':0};
-    this.services = [];
+    this.dataPresent = {'temperature':false, 'humidity':false};
+    this.waiting_response = {'temperature': false, 'humidity': false};
 }
 
 function getPortSizeAndMask(device, deviceName) {
@@ -136,34 +158,36 @@ OwfsAccessory.prototype = {
         this.services.push(informationService);
 
         switch (this.accessory) {
+            case 'OWFS_Sensor':
+                if (this.settings.humidity) {
+                    this.humidityService = new Service.HumiditySensor(this.name);
+                    this.humidityService 
+                        .getCharacteristic(Characteristic.CurrentRelativeHumidity)
+                        .on('get', this.getState.bind(this,"humidity"));
 
-            case 'OWFS_EDS0065': // Temp, Humidity, Controller
-                this.deviceName += '/EDS0065'
-                // Everything will line up below this now...
+                    this.services.push(this.humidityService);
+
+                    this.timer_hum = setInterval(this.updateState.bind(this,"humidity"), this.update_interval * 60000);
+                }        
+                if (this.settings.temperature) {
+                    this.temperatureService = new Service.TemperatureSensor(this.name);
+                    this.temperatureService
+                        .getCharacteristic(Characteristic.CurrentTemperature)
+                        .setProps({ minValue: -100, maxValue: 100, minStep: 0.1 })
+                        .on('get', this.getState.bind(this,"temperature"));
+                    this.services.push(this.temperatureService);
+
+                    this.timer_temp = setInterval(this.updateState.bind(this,"temperature"), this.update_interval * 60000);
                 
-            case 'OWFS_DS2438': // Temp, Humidity
-                this.ioPortName = "/" + this.deviceName;
-                humidityService = new Service.HumiditySensor(this.name);
-                humidityService 
-                    .getCharacteristic(Characteristic.CurrentRelativeHumidity)
-                    .on('get', this.owReadTemperature.bind(this,"humidity"));
-
-                this.services.push(humidityService);
+                    // Setup FakeGatoHistory on temperature - this will be
+                    // used to log both temperature and humidity
                 
-                // Define Temperature Reading as well as Humidity
-                // Pass on through...
-                                
-            case 'OWFS_DS18B20':
-                this.ioPortName = "/" + this.deviceName;
-                temperatureService = new Service.TemperatureSensor(this.name);
-                temperatureService
-                    .getCharacteristic(Characteristic.CurrentTemperature)
-                    .setProps({ minValue: -100, maxValue: 100, minStep: 0.1 })
-                    .on('get', this.owReadTemperature.bind(this,"temperature"));
-                this.services.push(temperatureService);
-
+                    this.temperatureService.log = this.log;
+                    this.loggingService = new FakeGatoHistoryService('room', this.temperatureService, {size: this.log_days*24*6, storage:'fs'});
+                    this.services.push(this.loggingService);
+            
+                }
                 break;
-
             case 'OWFS_DS2405':
             case 'OWFS_DS2408':
             case 'OWFS_DS2413':
@@ -215,23 +239,60 @@ OwfsAccessory.prototype = {
 // private method : read on one wire bus
 // today limited to Temperature devices
 // assumption : no interleaved call to this method for a given device (one variable per instance to store cbk)
-OwfsAccessory.prototype.owReadTemperature = function(d_type, cbk) {
+OwfsAccessory.prototype.updateState = function(d_type) {
     var data;
-    if (this.lastupdate + 60 < (Date.now() / 1000 | 0)) {
+    var newReading;
+    var logData = {};
 
-        this.OwfsCnx.read(this.ioPortName + '/' + d_type)
-            .then(function(cbk, data) {
-                this.reading[d_type] = parseFloat(0.0 + data.value.trim());
-                this.log(d_type + " is " + this.reading[d_type]);
-                cbk(null, this.reading[d_type]);
-            }.bind(this, cbk))
-            .catch(function(error) {
-                this.log.error("Error reading " + this.ioPortName + '/' + d_type);
-                cbk(error);
-            }.bind(this, cbk));
+    if (this.waiting_response[d_type]) {
+        this.log('Avoid updateState as previous response has not arrived yet for ' + this.ioPortName + '/' + d_type);
+        return;
     }
+    this.waiting_response[d_type] = true;
+    this.OwfsCnx.read('/' + this.deviceName + '/' + this.settings[d_type])
+        .then(function(data) {
+            newReading = Math.round(parseFloat(0.0 + data.value.trim())*10)/10;
+            if (newReading != this.reading[d_type]) {
+                this.reading[d_type] = newReading;
+                this.dataPresent[d_type] = true;
+                this.log(d_type + " is " + this.reading[d_type]);
+                if (d_type == 'temperature') {
+                    this.temperatureService
+                        .getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.reading[d_type], null);
+                } else {
+                    this.humidityService
+                        .getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(this.reading[d_type], null);
+                }
+            } else {
+                this.log(d_type + " no change");
+            }
+            
+            // Only log if it's the temperature accessory being processed
+            
+            if (d_type == 'temperature') {
+                logData.time = moment().unix();
+                logData.temp = this.reading['temperature'];
+                if (this.dataPresent['humidity']) {
+                    logData.humidity = this.reading['humidity'];
+                }
+                this.loggingService.addEntry(logData);
+            }
+            this.waiting_response[d_type] = false;
+            return this.reading[d_type];
+        }.bind(this))
+        .catch(function(error) {
+            this.log.error("Error reading " + this.ioPortName + '/' + d_type + ' ' + error);
+            return error;
+        }.bind(this));
     return;
 }
+
+OwfsAccessory.prototype.getState = function(d_type, cbk) {
+    this.updateState(d_type);
+    cbk(null, this.reading[d_type]);
+    return this.reading[d_type];
+}
+
 
 OwfsAccessory.prototype.owReadPio = function() {
     var data;
@@ -248,8 +309,3 @@ OwfsAccessory.prototype.owReadPio = function() {
     return;
 }
 
-if (!Date.now) {
-    Date.now = function() {
-        return new Date().getTime();
-    }
-}
