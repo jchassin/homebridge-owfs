@@ -66,8 +66,12 @@ Sample HomeBridge Configuration
       "platforms": []
     }
 
-# Adding sensor types
+# Adding switches
+Set `accessory` to the type of switch, `OWFS_DS2408` or `OWFS_DS2403`.
 
+# Adding sensors
+Set `accessory` to `OWFS_Sensor`.
+* `type` - Use a pre-configured sensor type.  If the type does not exist, you must specify the `capabilities`, or it will default to a simple temperature sensor setup.
 * `capabilities` - This represents the capabilities of the device
   * `temperature` - Add this key if the 1-Wire sensor supports temperature.  The value is the owfs target for the value.  In the example above for the sensor named `Downstairs`, the owfs full path would be `/34.0000063f4eaa/EDS0065/temperature`.
   * `humidity` - Same as temperature, but for humidity.
