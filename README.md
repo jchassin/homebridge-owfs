@@ -68,11 +68,11 @@ Sample HomeBridge Configuration
 
 # Adding sensor types
 
-- `capabilities` - This represents the capabilities of the device
-- `temperature` - Add this key if the 1-Wire sensor support temperature.  The value is the owfs target for the value.  In the example above for the sensor named `Downstairs` the owfs full path would be:  `/34.0000063f4eaa/EDS0065/temperature`.
-- `humidity` - Same as temperature, but for humidity.
+* `capabilities` - This represents the capabilities of the device
+  * `temperature` - Add this key if the 1-Wire sensor supports temperature.  The value is the owfs target for the value.  In the example above for the sensor named `Downstairs`, the owfs full path would be `/34.0000063f4eaa/EDS0065/temperature`.
+  * `humidity` - Same as temperature, but for humidity.
 
-Omitting `capabilities` and `type` will use the default of a simple temperature sensor.
+If both `capabilities` and `type` are omitted, the default of a simple temperature sensor will be used.
 
 # Other settings
 
