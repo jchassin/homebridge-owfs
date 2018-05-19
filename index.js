@@ -153,7 +153,7 @@ OwfsAccessory.prototype = {
         }
         informationService
             .setCharacteristic(Characteristic.Manufacturer, "Dallas")
-            .setCharacteristic(Characteristic.Model, "")
+            .setCharacteristic(Characteristic.Model, this.deviceType)
             .setCharacteristic(Characteristic.SerialNumber, this.deviceName);
         this.services.push(informationService);
 
