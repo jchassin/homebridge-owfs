@@ -1,5 +1,5 @@
 # homebridge-owfs
-This is a plugin for 1-Wire temperature and humidity sensors (DS18B20, for example) as well as the DS2408 and DS2403 (switches). As Pre-requisite, you need to have OWFS installed on your RPi. 
+This is a plugin for 1-Wire temperature and humidity sensors (`DS18B20`, for example) as well as the `DS2408` and `DS2403` (switches). As Pre-requisite, you need to have OWFS installed on your RPi. 
 From version 1.1.0, this plugin relies on OWSERVER protocol to poll 1-wire devices (previous versions used owfs directly through fs access).  Historical display of temperature and humidity data is available via HomeKit apps thats support graphing.
 
 # The following 1-Wire Sensors (types) are pre-configured:
