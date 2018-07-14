@@ -4,12 +4,16 @@
 
 var fs = require('fs');
 var Client = require("owjs").Client;
+var moment = require('moment');
 var Service, Characteristic;
 var temperatureService;
+var FakeGatoHistoryService;
 
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
+    FakeGatoHistoryService = require('fakegato-history')(homebridge);
+
     homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS18B20", OwfsAccessory);
     homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS2405", OwfsAccessory);
     homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS2408", OwfsAccessory);
@@ -142,6 +146,15 @@ OwfsAccessory.prototype = {
                     .on('get', this.owReadTemperature.bind(this));
                 this.services.push(temperatureService);
 
+                this.displayName = this.deviceName;     // for FakeGato persist storage filename
+                this.historyService = new FakeGatoHistoryService("room", this, {storage:'fs'});
+                this.services.push(this.historyService);
+
+                // Call function every 9 minutes (new entry less than 10 minutes to avoid gaps in the graph)
+                setInterval(function() {
+                    this.owReadTemperature(this.addHistoryCallback.bind(this))
+                }.bind(this), 9 * 60 * 1000);
+
                 break;
 
             case 'OWFS_DS2405':
@@ -189,6 +202,11 @@ OwfsAccessory.prototype = {
                 break;
         }
         return this.services;
+    },
+
+    addHistoryCallback: function(err, temp) {
+        if (err) return console.error(err);
+        this.historyService.addEntry({ time: moment().unix(), temp: temp, humidity: 50, ppm: 0 })
     }
 };
 
