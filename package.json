@@ -28,6 +28,8 @@
   },
   "homepage": "https://github.com/jchassin/homebridge-owfs#readme",
   "dependencies": {
+    "debug": "^3.1.0",
+    "fakegato-history": "~0.4.1",
     "owjs": ">=0.1.1"
   }
 }
