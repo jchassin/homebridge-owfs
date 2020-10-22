@@ -288,6 +288,7 @@ OwfsAccessory.prototype.updateState = function(d_type) {
         }.bind(this))
         .catch(function(error) {
             this.log.error("Error reading " + this.ioPortName + '/' + d_type + ' ' + error);
+            this.waiting_response[d_type] = false;
             return error;
         }.bind(this));
     return;
