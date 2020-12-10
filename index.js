@@ -148,10 +148,6 @@ OwfsAccessory.prototype = {
     getServices: function() {
         var informationService = new Service.AccessoryInformation();
 
-        var data = fs.readFileSync('/proc/cpuinfo', 'utf8');
-        if (typeof data == 'undefined') {
-            return this.log("Failed to read /proc/cpuinfo");
-        }
         informationService
             .setCharacteristic(Characteristic.Manufacturer, "Dallas")
             .setCharacteristic(Characteristic.Model, this.deviceType)
