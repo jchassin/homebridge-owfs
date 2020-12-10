@@ -1,14 +1,11 @@
 {
   "name": "homebridge-owfs",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A HomeBridge plugin for based on OWSERVER protocol",
   "main": "index.js",
   "keywords": [
-    "1-wire",
-    "owfs",
-    "owserver",
-    "ds18b20"
-    ],
+    "homebridge-plugin"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,9 +16,6 @@
   "files": [
     "index.js",
     "README.md"
-  ],
-  "keywords": [
-    "homebridge-plugin"
   ],
   "engines": {
     "node": ">=0.12.0",
@@ -35,9 +29,9 @@
   "homepage": "https://github.com/jchassin/homebridge-owfs#readme",
   "dependencies": {
     "debug": "^3.1.0",
+    "fakegato-history": "^0.4.3",
+    "moment": "^2.29.0",
     "owjs": ">=0.1.1",
-    "fakegato-history": "^0.4.0",
-    "moment": "^2.20.1",
     "q": "^1.0.1"
   }
 }
