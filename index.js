@@ -29,9 +29,12 @@ module.exports = function(homebridge) {
     Characteristic = homebridge.hap.Characteristic;
     FakeGatoHistoryService = require('fakegato-history')(homebridge);
 
-    homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_Sensor", OwfsAccessory); // Specify environmental sendor
-    homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS2405", OwfsAccessory);
-    homebridge.registerAccessory("homebridge-owfs-devices", "OWFS_DS2408", OwfsAccessory);
+    homebridge.registerAccessory("homebridge-owfs", "OWFS_Sensor", OwfsAccessory); // Specify environmental sendor
+    homebridge.registerAccessory("homebridge-owfs", "OWFS_DS2405", OwfsAccessory);
+    homebridge.registerAccessory("homebridge-owfs", "OWFS_DS2408", OwfsAccessory);
+    homebridge.registerAccessory("homebridge-owfs", "OWFS_DS18B20", OwfsAccessory);
+    homebridge.registerAccessory("homebridge-owfs", "OWFS_DS2438", OwfsAccessory);
+
 }
 
 

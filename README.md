@@ -85,6 +85,7 @@ If both `capabilities` and `type` are omitted, the default of a simple temperatu
 
 Version history  
 -------------------
+- 1.4.2 : fix #11 : error message during init (without functionnal impact)
 - 1.4.1 : fix #10
 - 1.4.0 : add historical data, timed push to homekit, flexible sensor configuration
           fix #9

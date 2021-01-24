@@ -1,6 +1,6 @@
 {
   "name": "homebridge-owfs",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "A HomeBridge plugin for based on OWSERVER protocol",
   "main": "index.js",
   "keywords": [
