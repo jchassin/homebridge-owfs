@@ -1,0 +1,34 @@
+{
+  "pluginAlias": "OWFS_Sensor",
+  "pluginType": "accessory",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "default": "MySensorName",
+        "required": true
+      },
+      "device": {
+          "title": "Device",
+          "type": "string",
+          "default": "28.0000063f4ead",
+          "required": true
+      },
+      "host_ip": {
+        "title": "IP address of the host",
+        "type": "string",
+        "default": "raspberrypi.local",
+        "required": false
+      },
+      "host_port": {
+        "title": "OWSERER PORT",
+        "type": "string",
+        "default": "4304",
+        "required": false
+      }
+    }
+  }
+}
+
