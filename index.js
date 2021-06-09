@@ -30,10 +30,10 @@ module.exports = function(homebridge) {
     FakeGatoHistoryService = require('fakegato-history')(homebridge);
 
     homebridge.registerAccessory("homebridge-owfs", "OWFS_Sensor", OwfsAccessory); // Specify environmental sendor
-    homebridge.registerAccessory("homebridge-owfs", "OWFS_DS2405", OwfsAccessory);
-    homebridge.registerAccessory("homebridge-owfs", "OWFS_DS2408", OwfsAccessory);
-    homebridge.registerAccessory("homebridge-owfs", "OWFS_DS18B20", OwfsAccessory);
-    homebridge.registerAccessory("homebridge-owfs", "OWFS_DS2438", OwfsAccessory);
+    //homebridge.registerAccessory("homebridge-owfs", "OWFS_DS2405", OwfsAccessory);
+    //homebridge.registerAccessory("homebridge-owfs", "OWFS_DS2408", OwfsAccessory);
+    //homebridge.registerAccessory("homebridge-owfs", "OWFS_DS18B20", OwfsAccessory);
+    //homebridge.registerAccessory("homebridge-owfs", "OWFS_DS2438", OwfsAccessory);
 
 }
 
@@ -157,7 +157,7 @@ OwfsAccessory.prototype = {
             .setCharacteristic(Characteristic.SerialNumber, this.deviceName);
         this.services.push(informationService);
 
-        switch (this.accessory) {
+        switch (this.deviceType) {
             case 'OWFS_Sensor':
                 if (this.settings.humidity) {
                     this.humidityService = new Service.HumiditySensor(this.name);
@@ -192,7 +192,7 @@ OwfsAccessory.prototype = {
             case 'OWFS_DS2408':
             case 'OWFS_DS2413':
 
-                var sizeAndMask = getPortSizeAndMask(this.accessory, this.deviceName);
+                var sizeAndMask = getPortSizeAndMask(this.deviceType, this.deviceName);
                 this.portSize = sizeAndMask[0];
                 this.portMask = sizeAndMask[1];
                 this.ioPortName = sizeAndMask[2];

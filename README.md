@@ -31,7 +31,8 @@ Sample HomeBridge Configuration
     
       "accessories": [
         {
-          "accessory": "OWFS_DS2408",
+          "accessory": "OWFS_Sensor",
+          "type": "OWFS_DS2408",
           "name": "GardenSwitch",
           "device": "29.67C6697351FF",
           "switches": [
@@ -85,6 +86,7 @@ If both `capabilities` and `type` are omitted, the default of a simple temperatu
 
 Version history  
 -------------------
+- 1.5.0 : change in the config format in order to ease schema verification (from this version, only use OWFS_Sensor as accessory and specify type field to give the device type 
 - 1.4.3 : adding required verification features
 - 1.4.2 : fix #11 : error message during init (without functionnal impact)
 - 1.4.1 : fix #10

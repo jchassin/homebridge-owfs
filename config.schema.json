@@ -1,6 +1,7 @@
 {
   "pluginAlias": "OWFS_Sensor",
   "pluginType": "accessory",
+  "footerDisplay": "For a detailed description, see the [wiki](https://github.com/jchassin/homebridge-owfs)",
   "schema": {
     "type": "object",
     "properties": {
@@ -10,10 +11,59 @@
         "default": "MySensorName",
         "required": true
       },
+      "type": {
+          "title": "Type of device",
+          "type": "string",
+          "oneOf": [
+           {
+             "title": "OWFS_Sensor",
+             "enum": ["OWFS_Sensor"]
+           },
+           {
+             "title": "OWFS_DS2408",
+             "enum": ["OWFS_DS2408"]
+           },
+           {
+             "title": "OWFS_DS2405",
+             "enum": ["OWFS_DS2405"]
+           },
+           {
+             "title": "OWFS_DS18B20",
+             "enum": ["OWFS_DS18B20"]
+           },
+           {
+             "title": "OWFS_DS2438",
+             "enum": ["OWFS_DS2438"]
+           },
+           {
+             "title": "OWFS_EDS0064",
+             "enum": ["OWFS_EDS0064"]
+           },
+           {
+             "title": "OWFS_EDS0065",
+             "enum": ["OWFS_EDS0065"]
+           },
+           {
+             "title": "OWFS_EDS0066",
+             "enum": ["OWFS_EDS0066"]
+           },
+           {
+             "title": "OWFS_EDS0067",
+             "enum": ["OWFS_EDS0067"]
+           },
+           {
+             "title": "OWFS_EDS0068",
+             "enum": ["OWFS_EDS0068"]
+           }
+           ],
+          "default": "OWFS_Sensor",
+          "required": true,
+          "description": "Select the type of device"
+      },
       "device": {
           "title": "Device",
           "type": "string",
-          "default": "28.0000063f4ead",
+          "default": "28.XXXXXXXXXX",
           "required": true
       },
       "host_ip": {
@@ -27,8 +77,24 @@
         "type": "string",
         "default": "4304",
         "required": false
+       },
+       "switches": {
+       "type": "array",
+        "items": {
+            "title": "switches",
+            "type": "object",
+            "properties": {
+                "name": {
+                     "title": "Name of the port",
+                     "type": "string"
+                 },
+                 "port": {
+                     "title": "Pin number of the port",
+                     "type": "string"
+                 }
+            }
+        }
       }
     }
   }
 }
-
