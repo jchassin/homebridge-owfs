@@ -1,6 +1,6 @@
 {
   "name": "homebridge-owfs",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A HomeBridge plugin for based on OWSERVER protocol",
   "main": "index.js",
   "keywords": [
@@ -8,6 +8,11 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "funding": 
+  {
+      "type": "paypal",
+      "url": "https://paypal.me/jsachin94"
   },
   "repository": {
     "type": "git",

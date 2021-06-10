@@ -67,9 +67,6 @@ Sample HomeBridge Configuration
       "platforms": []
     }
 
-# Adding switches
-Set `accessory` to the type of switch, `OWFS_DS2408` or `OWFS_DS2403`.
-
 # Adding sensors
 Set `accessory` to `OWFS_Sensor`.
 * `type` - Use a pre-configured sensor type.  If the type does not exist, you must specify the `capabilities`, or it will default to a simple temperature sensor setup.
@@ -84,9 +81,13 @@ If both `capabilities` and `type` are omitted, the default of a simple temperatu
 - `update_interval` - time, in minutes, between automatic updates to HomeKit (default: 2)
 - `log_days` - number of days of historical data to keep (default: 365)
 
+For switches sensors, set type to OWFS_DS2408 or other switch device
+
+
 Version history  
 -------------------
-- 1.5.0 : change in the config format in order to ease schema verification (from this version, only use OWFS_Sensor as accessory and specify type field to give the device type 
+- 1.5.1 : adding verified tag
+- 1.5.0 : fix #12 : change in the config format in order to ease schema verification (from this version, only use OWFS_Sensor as accessory and specify type field to give the device type 
 - 1.4.3 : adding required verification features
 - 1.4.2 : fix #11 : error message during init (without functionnal impact)
 - 1.4.1 : fix #10
@@ -99,4 +100,9 @@ Version history
 - 1.2.0 : add ds2403 and ds2408 management (switches)
 - 1.1.0 : add owserver management
 - 1.0.0 : ds18b20 management through access through FS
+
+
+verified-by-homebridge
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
+
 
