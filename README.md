@@ -87,7 +87,8 @@ For switches sensors, set type to OWFS_DS2408 or other switch device
 
 Version history  
 -------------------
-- 1.5.1 : adding verified tag
+- 1.5.2 : fix #14 
+- 1.5.1 : adding verified tag #13
 - 1.5.0 : fix #12 : change in the config format in order to ease schema verification (from this version, only use OWFS_Sensor as accessory and specify type field to give the device type 
 - 1.4.3 : adding required verification features
 - 1.4.2 : fix #11 : error message during init (without functionnal impact)

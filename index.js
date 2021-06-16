@@ -100,7 +100,7 @@ OwfsAccessory.prototype = {
     getSwitchState: function(switchMask, callback) {
         callback(null, parseInt(this.currentStatus & switchMask) ? 1 : 0);
     },
-    setSwitchState: function(targetService, currentStatusState, callback, context) {
+    setSwitchState: function(targetService, requestedState, callback, context) {
         var funcContext = 'fromSetSwitchState';
 
         // Callback safety
@@ -121,7 +121,7 @@ OwfsAccessory.prototype = {
                 var portMask = 1 << (this.switches[idx - 1].port - 1);
                 var curState = portMask & this.currentStatus;
                 var newState = 0;
-                if (curState) {
+                if (requestedState === false) {
                     this.currentStatus &= ~portMask;
                     newState = 0;
                 } else {
