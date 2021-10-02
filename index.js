@@ -159,6 +159,7 @@ OwfsAccessory.prototype = {
 
         switch (this.deviceType) {
             case 'OWFS_Sensor':
+            case 'OWFS_DS18B20':
                 if (this.settings.humidity) {
                     this.humidityService = new Service.HumiditySensor(this.name);
                     this.humidityService 
@@ -229,7 +230,7 @@ OwfsAccessory.prototype = {
                 this.owReadPio();
                 break;
             default:
-                this.log("Unknwown device type");
+                this.log("Unknown device type");
                 break;
         }
         return this.services;
