@@ -257,7 +257,8 @@ OwfsAccessory.prototype.updateState = function(d_type) {
     this.waiting_response[d_type] = true;
     this.OwfsCnx.read('/' + this.deviceName + '/' + this.settings[d_type])
         .then(function(data) {
-            newReading = Math.round(parseFloat(0.0 + data.value.trim())*10)/10;
+            newReading = parseFloat(data.value.trim());
+
             if (newReading != this.reading[d_type]) {
                 this.reading[d_type] = newReading;
                 this.dataPresent[d_type] = true;

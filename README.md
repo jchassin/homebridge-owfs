@@ -89,6 +89,7 @@ For switches sensors, set type to OWFS_DS2408 or other switch device
 
 Version history  
 -------------------
+- 1.5.4 : fix #15 => negative value for temperature saturated to 0
 - 1.5.3 : fix #14 => configuratin with OWFS_DS18B20 not properly handled
 - 1.5.2 : fix something 
 - 1.5.1 : adding verified tag #13
