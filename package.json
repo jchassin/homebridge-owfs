@@ -1,6 +1,6 @@
 {
   "name": "homebridge-owfs",
-  "version": "1.5.5-beta.0",
+  "version": "1.5.5-beta.1",
   "description": "A HomeBridge plugin for based on OWSERVER protocol",
   "main": "index.js",
   "keywords": [
@@ -23,8 +23,8 @@
     "README.md"
   ],
   "engines": {
-    "node": ">=0.12.0",
-    "homebridge": ">=0.2.0"
+    "node": ">=14.2.0",
+    "homebridge": "^1.8.0 || ^2.0.0-beta.0"
   },
   "author": "Jean Chassin",
   "license": "MIT",
