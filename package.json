@@ -9,10 +9,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "funding": 
-  {
-      "type": "paypal",
-      "url": "https://paypal.me/jsachin94"
+  "funding": {
+    "type": "paypal",
+    "url": "https://paypal.me/jsachin94"
   },
   "repository": {
     "type": "git",
